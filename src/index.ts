@@ -1,3 +1,5 @@
-const name: string = "Mario";
+const myName:string = "Vini";
 
-console.log(name)
+function sum(a: number, b: number):number {
+    return a + b
+}
