@@ -140,6 +140,7 @@ for (const id of [rincko.id, "inexistente"]) {
         console.log("Falha na busca:", result.error);
     }
 }
+<<<<<<< Updated upstream
 const admin = {
     id: "admin-1",
     name: "Vini",
@@ -1482,3 +1483,121 @@ console.log("Acesso pelo namespace:", LessonModule.formatLesson(namespaceLesson)
 // "as" em imports renomeia simbolos: nao e uma assercao de tipo.
 // Alias de caminho (como @/modulo) e outro recurso: paths no tsconfig sozinho
 // nao reescreve imports emitidos nem configura a resolucao do Node em runtime.
+=======
+const userTuple = [myName, age, isActive];
+userTuple[1] = 26; // Uma tupla mutavel permite alterar o valor do mesmo tipo.
+const [tupleName, tupleAge, tupleActive] = userTuple;
+console.log("Tupla de usuario:", tupleName, tupleAge, tupleActive);
+const contactWithoutPhone = [myName, "vini@example.com"];
+const contactWithPhone = [myName, "vini@example.com", "11999999999"];
+function formatContact([name, email, phone]) {
+    return `${name} <${email}> | ${phone ?? "Telefone nao informado"}`;
+}
+console.log(formatContact(contactWithoutPhone));
+console.log(formatContact(contactWithPhone));
+// readonly bloqueia alteracoes via TypeScript, sem congelar o valor em runtime.
+const walletSnapshot = ["credits", rincko.wallet.credits];
+// walletSnapshot[1] = 0; // Erro: indice somente de leitura.
+console.log("Snapshot da carteira:", formatBalance(walletSnapshot));
+// as const infere uma tupla readonly com os valores literais.
+const initialPosition = [0, 0];
+console.log("Posicao inicial:", initialPosition);
+function calculateAverage([student, ...grades]) {
+    if (grades.length === 0) {
+        return `${student}: sem notas`;
+    }
+    const average = grades.reduce((total, grade) => total + grade, 0) / grades.length;
+    return `${student}: media ${average.toFixed(2)}`;
+}
+console.log(calculateAverage([myName, ...scores]));
+console.log(calculateAverage(["Ana"]));
+const sumArguments = [10, 20];
+console.log("Soma com spread:", sum(...sumArguments));
+function lookupUserTuple(id) {
+    const result = findUser(id);
+    return result.success ? [true, result.data] : [false, result.error];
+}
+for (const id of [rincko.id, "inexistente"]) {
+    const [success, value] = lookupUserTuple(id);
+    if (success) {
+        // O discriminante permite reconhecer value como UserSummary.
+        console.log("Usuario pela tupla:", value.name);
+    }
+    else {
+        console.log("Erro pela tupla:", value.toUpperCase());
+    }
+}
+// ENUM: agrupa constantes nomeadas e tambem existe em tempo de execucao.
+// Enum numerico: o primeiro valor e 0; os seguintes incrementam em 1.
+var AccessLevel;
+(function (AccessLevel) {
+    AccessLevel[AccessLevel["Guest"] = 0] = "Guest";
+    AccessLevel[AccessLevel["Member"] = 1] = "Member";
+    AccessLevel[AccessLevel["Admin"] = 2] = "Admin";
+})(AccessLevel || (AccessLevel = {}));
+const accessLevel = AccessLevel.Member;
+console.log("Nivel numerico:", accessLevel); // 1
+console.log("Nome pelo valor:", AccessLevel[accessLevel]); // "Member"
+// Valores numericos explicitos sao uteis para codigos conhecidos.
+var HttpStatus;
+(function (HttpStatus) {
+    HttpStatus[HttpStatus["Ok"] = 200] = "Ok";
+    HttpStatus[HttpStatus["NotFound"] = 404] = "NotFound";
+    HttpStatus[HttpStatus["InternalServerError"] = 500] = "InternalServerError";
+})(HttpStatus || (HttpStatus = {}));
+console.log("Status HTTP:", HttpStatus.Ok, HttpStatus.NotFound, HttpStatus.InternalServerError);
+// Enum de string: cada membro precisa de um valor explicito.
+// Nao possui o mapeamento reverso automatico dos enums numericos.
+var AccountStatus;
+(function (AccountStatus) {
+    AccountStatus["Pending"] = "pending";
+    AccountStatus["Active"] = "active";
+    AccountStatus["Suspended"] = "suspended";
+})(AccountStatus || (AccountStatus = {}));
+// Record exige um rotulo para cada membro do enum.
+const accountStatusLabels = {
+    [AccountStatus.Pending]: "Aguardando ativacao",
+    [AccountStatus.Active]: "Conta ativa",
+    [AccountStatus.Suspended]: "Conta suspensa",
+};
+function describeAccountStatus(status) {
+    // O never ajuda a detectar um membro novo que ainda nao foi tratado.
+    switch (status) {
+        case AccountStatus.Pending:
+            return "Ative a conta para realizar operacoes.";
+        case AccountStatus.Active:
+            return "A conta pode realizar operacoes.";
+        case AccountStatus.Suspended:
+            return "As operacoes da conta estao bloqueadas.";
+        default: {
+            const unexpectedStatus = status;
+            throw new Error(`Status inesperado: ${unexpectedStatus}`);
+        }
+    }
+}
+const account = {
+    user: { id: rincko.id, name: rincko.name },
+    status: AccountStatus.Pending,
+};
+console.log(accountStatusLabels[account.status], describeAccountStatus(account.status));
+account.status = AccountStatus.Active;
+console.log(accountStatusLabels[account.status], describeAccountStatus(account.status));
+// account.status = "active"; // Erro: use AccountStatus.Active.
+// Dados externos precisam de validacao; uma assercao nao valida o valor.
+function isAccountStatus(value) {
+    return typeof value === "string"
+        && Object.values(AccountStatus).some(status => status === value);
+}
+for (const receivedStatus of ["suspended", "invalid", 123]) {
+    if (isAccountStatus(receivedStatus)) {
+        console.log("Status externo valido:", accountStatusLabels[receivedStatus]);
+    }
+    else {
+        console.log("Status externo invalido:", receivedStatus);
+    }
+}
+const literalStatus = "active";
+console.log("Uniao literal:", literalStatus);
+console.log("Valores do enum de string:", Object.values(AccountStatus));
+export {};
+>>>>>>> Stashed changes

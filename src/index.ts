@@ -256,6 +256,7 @@ for (const id of [rincko.id, "inexistente"]) {
     }
 }
 
+<<<<<<< Updated upstream
 // INTERSECTION TYPES: & exige que o valor atenda a todos os tipos combinados.
 // Diferente da union (A | B), a intersecao (A & B) exige A e B ao mesmo tempo.
 type Identifiable = {
@@ -1407,10 +1408,134 @@ function describeDelivery(delivery: DeliveryState): string {
             // Uma nova variante sem case faz esta atribuicao falhar na compilacao.
             const unhandled: never = delivery;
             return assertNever(unhandled);
+=======
+// TUPLAS: cada posicao tem um tipo conhecido.
+// Os rotulos documentam as posicoes; o acesso continua sendo por indice.
+type UserTuple = [name: string, age: number, active: boolean];
+const userTuple: UserTuple = [myName, age, isActive];
+userTuple[1] = 26; // Uma tupla mutavel permite alterar o valor do mesmo tipo.
+const [tupleName, tupleAge, tupleActive] = userTuple;
+console.log("Tupla de usuario:", tupleName, tupleAge, tupleActive);
+
+// Um array de uniao aceita qualquer ordem; uma tupla exige a ordem declarada.
+// const invalidUser: UserTuple = [26, "Vini", true]; // Erro de tipagem.
+// userTuple[3]; // Erro: essa posicao nao existe no tipo da tupla.
+// Evite push/pop em tuplas mutaveis: esses metodos podem alterar seu tamanho.
+
+// Elemento opcional: esta tupla aceita dois ou tres elementos.
+type ContactTuple = [name: string, email: string, phone?: string];
+const contactWithoutPhone: ContactTuple = [myName, "vini@example.com"];
+const contactWithPhone: ContactTuple = [myName, "vini@example.com", "11999999999"];
+function formatContact([name, email, phone]: ContactTuple): string {
+    return `${name} <${email}> | ${phone ?? "Telefone nao informado"}`;
+}
+console.log(formatContact(contactWithoutPhone));
+console.log(formatContact(contactWithPhone));
+
+// readonly bloqueia alteracoes via TypeScript, sem congelar o valor em runtime.
+const walletSnapshot: WalletEntry = ["credits", rincko.wallet.credits];
+// walletSnapshot[1] = 0; // Erro: indice somente de leitura.
+console.log("Snapshot da carteira:", formatBalance(walletSnapshot));
+
+// as const infere uma tupla readonly com os valores literais.
+const initialPosition = [0, 0] as const;
+console.log("Posicao inicial:", initialPosition);
+
+// Rest: uma posicao fixa seguida por zero ou mais numeros.
+type StudentScores = [student: string, ...grades: number[]];
+function calculateAverage([student, ...grades]: StudentScores): string {
+    if (grades.length === 0) {
+        return `${student}: sem notas`;
+    }
+    const average = grades.reduce((total, grade) => total + grade, 0) / grades.length;
+    return `${student}: media ${average.toFixed(2)}`;
+}
+console.log(calculateAverage([myName, ...scores]));
+console.log(calculateAverage(["Ana"]));
+
+// Uma tupla tambem pode descrever os argumentos de uma funcao.
+type SumArguments = [first: number, second: number];
+const sumArguments: SumArguments = [10, 20];
+console.log("Soma com spread:", sum(...sumArguments));
+
+// Retorno com tupla generica e uniao discriminada.
+type TupleResult<T> =
+    | readonly [success: true, data: T]
+    | readonly [success: false, error: string];
+
+function lookupUserTuple(id: UserId): TupleResult<UserSummary> {
+    const result = findUser(id);
+    return result.success ? [true, result.data] : [false, result.error];
+}
+
+for (const id of [rincko.id, "inexistente"]) {
+    const [success, value] = lookupUserTuple(id);
+    if (success) {
+        // O discriminante permite reconhecer value como UserSummary.
+        console.log("Usuario pela tupla:", value.name);
+    } else {
+        console.log("Erro pela tupla:", value.toUpperCase());
+    }
+}
+
+// ENUM: agrupa constantes nomeadas e tambem existe em tempo de execucao.
+// Enum numerico: o primeiro valor e 0; os seguintes incrementam em 1.
+enum AccessLevel {
+    Guest,
+    Member,
+    Admin,
+}
+
+const accessLevel: AccessLevel = AccessLevel.Member;
+console.log("Nivel numerico:", accessLevel); // 1
+console.log("Nome pelo valor:", AccessLevel[accessLevel]); // "Member"
+
+// Valores numericos explicitos sao uteis para codigos conhecidos.
+enum HttpStatus {
+    Ok = 200,
+    NotFound = 404,
+    InternalServerError = 500,
+}
+console.log("Status HTTP:", HttpStatus.Ok, HttpStatus.NotFound, HttpStatus.InternalServerError);
+
+// Enum de string: cada membro precisa de um valor explicito.
+// Nao possui o mapeamento reverso automatico dos enums numericos.
+enum AccountStatus {
+    Pending = "pending",
+    Active = "active",
+    Suspended = "suspended",
+}
+
+type Account = {
+    user: UserSummary;
+    status: AccountStatus;
+};
+
+// Record exige um rotulo para cada membro do enum.
+const accountStatusLabels: Record<AccountStatus, string> = {
+    [AccountStatus.Pending]: "Aguardando ativacao",
+    [AccountStatus.Active]: "Conta ativa",
+    [AccountStatus.Suspended]: "Conta suspensa",
+};
+
+function describeAccountStatus(status: AccountStatus): string {
+    // O never ajuda a detectar um membro novo que ainda nao foi tratado.
+    switch (status) {
+        case AccountStatus.Pending:
+            return "Ative a conta para realizar operacoes.";
+        case AccountStatus.Active:
+            return "A conta pode realizar operacoes.";
+        case AccountStatus.Suspended:
+            return "As operacoes da conta estao bloqueadas.";
+        default: {
+            const unexpectedStatus: never = status;
+            throw new Error(`Status inesperado: ${unexpectedStatus}`);
+>>>>>>> Stashed changes
         }
     }
 }
 
+<<<<<<< Updated upstream
 const deliveries: DeliveryState[] = [
     { kind: "pending" },
     { kind: "sent", trackingCode: "BR-123" },
@@ -2353,3 +2478,33 @@ console.log("Acesso pelo namespace:", LessonModule.formatLesson(namespaceLesson)
 // "as" em imports renomeia simbolos: nao e uma assercao de tipo.
 // Alias de caminho (como @/modulo) e outro recurso: paths no tsconfig sozinho
 // nao reescreve imports emitidos nem configura a resolucao do Node em runtime.
+=======
+const account: Account = {
+    user: { id: rincko.id, name: rincko.name },
+    status: AccountStatus.Pending,
+};
+console.log(accountStatusLabels[account.status], describeAccountStatus(account.status));
+account.status = AccountStatus.Active;
+console.log(accountStatusLabels[account.status], describeAccountStatus(account.status));
+// account.status = "active"; // Erro: use AccountStatus.Active.
+
+// Dados externos precisam de validacao; uma assercao nao valida o valor.
+function isAccountStatus(value: unknown): value is AccountStatus {
+    return typeof value === "string"
+        && Object.values(AccountStatus).some(status => status === value);
+}
+
+for (const receivedStatus of ["suspended", "invalid", 123]) {
+    if (isAccountStatus(receivedStatus)) {
+        console.log("Status externo valido:", accountStatusLabels[receivedStatus]);
+    } else {
+        console.log("Status externo invalido:", receivedStatus);
+    }
+}
+
+// Diferente de um enum, uma uniao literal nao gera um objeto JavaScript.
+type AccountStatusLiteral = "pending" | "active" | "suspended";
+const literalStatus: AccountStatusLiteral = "active";
+console.log("Uniao literal:", literalStatus);
+console.log("Valores do enum de string:", Object.values(AccountStatus));
+>>>>>>> Stashed changes
