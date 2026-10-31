@@ -3,13 +3,17 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "strict": true,
-        "lib": ["ESNext"],
-        "target": "esnext",
+        "lib": ["ES2023"],
+        "target": "ES2023",
         "module": "nodenext",
         "moduleResolution": "nodenext",
+        "rewriteRelativeImportExtensions": true,
+        "erasableSyntaxOnly": true,
+        "verbatimModuleSyntax": true,
 
         "rootDir": "src",
-        "outDir": "build",
+        "outDir": "dist",
+        "noEmit": true,
 
         "types": ["node"],
 
@@ -17,6 +21,6 @@
         "noUnusedParameters": true,
         "noEmitOnError": true,
     },
-    "include": ["src"],
-    "exclude": ["node_modules"]
+    "include": ["src/app.ts", "src/server.ts"],
+    "exclude": ["node_modules", "dist", "dist-transpiled"]
 }

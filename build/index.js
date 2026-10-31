@@ -1600,4 +1600,4 @@ const literalStatus = "active";
 console.log("Uniao literal:", literalStatus);
 console.log("Valores do enum de string:", Object.values(AccountStatus));
 export {};
->>>>>>> Stashed changes
+

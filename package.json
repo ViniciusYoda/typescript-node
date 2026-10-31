@@ -1,15 +1,30 @@
 {
   "name": "typescript-node",
+  "private": true,
+  "description": "API didatica de usuarios e carteiras com Fastify e TypeScript nativo no Node.js",
   "type": "module",
-  "main": "build/index.js",
+  "engines": { "node": ">=24.12.0" },
+  "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsx src/index.ts",
-    "start": "node ."
+    "clean": "node scripts/clean.mjs",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
+    "build:watch": "tsc -p tsconfig.build.json --watch",
+    "transpile": "tsc -p tsconfig.build.json --noCheck --outDir dist-transpiled",
+    "dev": "node --watch src/server.ts",
+    "study": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
+    "verify": "npm run typecheck && npm test && npm run test:build",
+    "test": "node --test tests/*.test.ts",
+    "test:build": "npm run build && node --test tests/build.test.mjs",
+    "start": "node src/server.ts",
+    "start:build": "node --enable-source-maps dist/server.js"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "fastify": "^5.12.7"
   }
 }
